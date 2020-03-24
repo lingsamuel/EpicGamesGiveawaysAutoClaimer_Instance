@@ -1,12 +1,18 @@
 name: Get Epic Game
 
-on:
-  # 每周五 UTC 时间 2:25 (中国时间周五 10：25)自动触发，使用前取消注释，即删除下面两行的前面的 #
-  #schedule:
-  #  - cron: "25 2 * * 5"
-  repository_dispatch: 
-    types: epicgame
+# on:
+#   # 每周五 UTC 时间 2:25 (中国时间周五 10：25)自动触发，使用前取消注释，即删除下面两行的前面的 #
+#   schedule:
+#    - cron: "25 2 * * 5"
+#   repository_dispatch: 
+#     types: epicgame
 
+on:
+  schedule:
+   - cron: "25 2 * * *"
+  push:
+    branches:
+      - master
 jobs:
   MainWork:
     runs-on: ubuntu-latest
@@ -17,15 +23,18 @@ jobs:
       - name: Clone Claimer Repository
         uses: actions/checkout@v2
         with:
-          repository: Revadike/epicgames-freebies-claimer
+          repository: lingsamuel/epicgames-freebies-claimer
+          ref: 'aa21c57d0ef19948a4f2864207173c86d5c0ffb7'
           path: workdir
 
-      # 在 'Settings' - 'Secrets' 添加 EMAIL (你的 Epic 邮箱)，PASSWD (你的 Epic 密码)
+      # 在 'Settings' - 'Secrets' 添加 EMAIL (你的 Epic 邮箱)，PASSWD (你的 Epic 密码)，SECRET（二步验证 Secret）
       - name: Get Gifts
         run: |
           cd workdir
           npm install
-          node gimme_free_epic_shit '${{ secrets.EMAIL }}' '${{ secrets.PASSWD }}' > games.info
+          echo '${{ secrets.EMAIL }}'
+          echo '${{ secrets.PASSWD }}'
+          node claimer '${{ secrets.EMAIL }}' '${{ secrets.PASSWD }}' 0 '${{ secrets.SECRET }}' > games.info
 
       - name: Edit Games.info
         if: always()
@@ -33,7 +42,7 @@ jobs:
           cd workdir
           sed -i '1d' games.info
           sed -i 's/Successfully claimed/成功领取/' games.info
-          sed -i 's/was already claimed for this account/已经领取/' games.info
+          sed -i 's/was already claimed for this account/已经领取过了/' games.info
           sed -i '$d' games.info
           date --rfc-3339=seconds >> ../games.info
           cat games.info >> ../games.info
@@ -54,11 +63,10 @@ jobs:
 
       # 如果需要推送到 Telegram 用来提示，取消注释以下内容
       # 这部分的内容可以查看 https://www.github.com/appleboy/telegram-action
-      # - name: Send Gift Info
-      #   if: always()
-      #   uses: appleboy/telegram-action@master
-      #   with:
-      #     to: "Chat ID"
-      #     token: "TelegramBot 的 Token"
-      #     format: markdown
-      #     message_file: workdir/games.info
+      - name: Send Gift Info
+        uses: appleboy/telegram-action@0.0.7
+        with:
+          to: ${{ secrets.TG_TO }}
+          token: ${{ secrets.TGBOT_TOKEN }}
+          format: markdown
+          message_file: workdir/games.info
