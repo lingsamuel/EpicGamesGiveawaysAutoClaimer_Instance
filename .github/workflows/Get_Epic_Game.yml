@@ -1,12 +1,5 @@
 name: Get Epic Game
 
-# on:
-#   # 每周五 UTC 时间 2:25 (中国时间周五 10：25)自动触发，使用前取消注释，即删除下面两行的前面的 #
-#   schedule:
-#    - cron: "25 2 * * 5"
-#   repository_dispatch: 
-#     types: epicgame
-
 on:
   schedule:
    - cron: "25 2 * * *"
@@ -32,8 +25,6 @@ jobs:
         run: |
           cd workdir
           npm install
-          echo '${{ secrets.EMAIL }}'
-          echo '${{ secrets.PASSWD }}'
           node claimer '${{ secrets.EMAIL }}' '${{ secrets.PASSWD }}' 0 '${{ secrets.SECRET }}' > games.info
 
       - name: Edit Games.info
