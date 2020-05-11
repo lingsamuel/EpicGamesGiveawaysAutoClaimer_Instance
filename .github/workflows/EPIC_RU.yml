@@ -60,4 +60,4 @@ jobs:
           to: ${{ secrets.TG_TO }}
           token: ${{ secrets.TGBOT_TOKEN }}
           format: markdown
-          message_file: workdir/games.info
+          message_file: workdir/games_ru.info
