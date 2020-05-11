@@ -1,0 +1,63 @@
+name: Get Epic Game
+
+on:
+  schedule:
+   - cron: "45 17 * * *"
+  push:
+    branches:
+      - master
+jobs:
+  MainWork:
+    runs-on: ubuntu-latest
+    steps:      
+      - name: Clone Workflow Repository
+        uses: actions/checkout@v2
+
+      - name: Clone Claimer Repository
+        uses: actions/checkout@v2
+        with:
+          repository: lingsamuel/epicgames-freebies-claimer
+          ref: 'aa21c57d0ef19948a4f2864207173c86d5c0ffb7'
+          path: workdir
+
+      # 在 'Settings' - 'Secrets' 添加 EMAIL (你的 Epic 邮箱)，PASSWD (你的 Epic 密码)，SECRET（二步验证 Secret）
+      - name: Get Gifts
+        run: |
+          cd workdir
+          npm install
+          node claimer '${{ secrets.EMAIL_RU }}' '${{ secrets.PASSWD_RU }}' 0 '${{ secrets.SECRET_RU }}' > games_ru.info
+
+      - name: Edit Games.info
+        if: always()
+        run: |
+          cd workdir
+          sed -i '1d' games_ru.info
+          sed -i 's/Successfully claimed/成功领取/' games_ru.info
+          sed -i 's/was already claimed for this account/已经领取过了/' games_ru.info
+          sed -i '$d' games_ru.info
+          date --rfc-3339=seconds >> ../games_ru.info
+          cat games.info >> ../games_ru.info
+          echo >> ../games_ru.info
+
+      - name: Commit Files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m ":package: 领取游戏"
+
+      # 此处的 ${{ secrets.GITHUB_TOKEN }} 是 Actions 自有变量，不用管
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 如果需要推送到 Telegram 用来提示，取消注释以下内容
+      # 这部分的内容可以查看 https://www.github.com/appleboy/telegram-action
+      - name: Send Gift Info
+        uses: appleboy/telegram-action@0.0.7
+        with:
+          to: ${{ secrets.TG_TO }}
+          token: ${{ secrets.TGBOT_TOKEN }}
+          format: markdown
+          message_file: workdir/games.info
