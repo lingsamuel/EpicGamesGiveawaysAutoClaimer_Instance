@@ -2,7 +2,7 @@ name: Get Epic Game (RU)
 
 on:
   schedule:
-   - cron: "25 3 * * *"
+   - cron: "45 2 * * *"
   push:
     branches:
       - master
