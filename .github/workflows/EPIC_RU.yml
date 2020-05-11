@@ -2,7 +2,7 @@ name: Get Epic Game (RU)
 
 on:
   schedule:
-   - cron: "45 11 * * *"
+   - cron: "25 2 * * *"
   push:
     branches:
       - master
@@ -36,7 +36,7 @@ jobs:
           sed -i 's/was already claimed for this account/已经领取过了/' games_ru.info
           sed -i '$d' games_ru.info
           date --rfc-3339=seconds >> ../games_ru.info
-          cat games.info >> ../games_ru.info
+          cat games_ru.info >> ../games_ru.info
           echo >> ../games_ru.info
 
       - name: Commit Files
