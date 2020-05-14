@@ -3,9 +3,9 @@ name: Get Epic Game
 on:
   schedule:
    - cron: "25 2 * * *"
-#   push:
-#     branches:
-#       - master
+  push:
+    branches:
+      - master
 jobs:
   MainWork:
     runs-on: ubuntu-latest
