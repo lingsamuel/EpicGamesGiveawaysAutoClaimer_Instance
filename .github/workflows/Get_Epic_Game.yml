@@ -16,8 +16,8 @@ jobs:
       - name: Clone Claimer Repository
         uses: actions/checkout@v2
         with:
-          repository: lingsamuel/epicgames-freebies-claimer
-          ref: 'aa21c57d0ef19948a4f2864207173c86d5c0ffb7'
+          repository: Revadike/epicgames-freebies-claimer
+          ref: '593cc8f73f6cc6bf013abd1c477bf6158dd38445'
           path: workdir
 
       # 在 'Settings' - 'Secrets' 添加 EMAIL (你的 Epic 邮箱)，PASSWD (你的 Epic 密码)，SECRET（二步验证 Secret）
