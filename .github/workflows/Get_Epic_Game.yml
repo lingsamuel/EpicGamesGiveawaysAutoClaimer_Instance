@@ -1,6 +1,8 @@
 name: Get Epic Game
 
 on:
+#  watch: # 删除本行开头的 # 号
+#    types: started # 删除本行开头的 # 号，点击 Star 按钮可以手动触发 Actions
   schedule:
    - cron: "25 0 * * *"
   push:
