@@ -29,6 +29,7 @@ jobs:
           mkdir .egstore
           npm install
           node claimer '${{ secrets.EMAIL }}' '${{ secrets.PASSWD }}' 0 '${{ secrets.SECRET }}' # > games.info
+          cat games.info
 
 #       - name: Edit Games.info
 #         if: always()
