@@ -24,8 +24,10 @@ jobs:
       - name: Get Gifts
         run: |
           cd workdir
+          mkdir .egstore
           npm install
           node claimer '${{ secrets.EMAIL_RU }}' '${{ secrets.PASSWD_RU }}' 0 '${{ secrets.SECRET_RU }}' > games_ru.info
+          cat games_ru.info
 
       - name: Edit Games.info
         if: always()
